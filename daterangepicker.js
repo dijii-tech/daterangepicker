@@ -55,6 +55,7 @@
         this.autoUpdateInput = true;
         this.alwaysShowCalendars = false;
         this.ranges = {};
+        this.inline = false;
 
         this.opens = 'right';
         if (this.element.hasClass('pull-right'))
@@ -278,6 +279,9 @@
         if (typeof options.alwaysShowCalendars === 'boolean')
             this.alwaysShowCalendars = options.alwaysShowCalendars;
 
+        if (typeof options.inline === 'boolean')
+            this.inline = options.inline;
+
         // update day names order to firstDay
         if (this.locale.firstDay != 0) {
             var iterator = this.locale.firstDay;
@@ -441,6 +445,10 @@
         //
         // if attached to a text input, set the initial value
         //
+
+        if (this.inline) {
+            this.show();
+        }
 
         this.updateElement();
 
@@ -1122,18 +1130,17 @@
             // Create a click proxy that is private to this instance of datepicker, for unbinding
             this._outsideClickProxy = $.proxy(function(e) { this.outsideClick(e); }, this);
 
-            // Bind global datepicker mousedown for hiding and
-            $(document)
-              .on('mousedown.daterangepicker', this._outsideClickProxy)
-              // also support mobile devices
-              .on('touchend.daterangepicker', this._outsideClickProxy)
-              // also explicitly play nice with Bootstrap dropdowns, which stopPropagation when clicking them
-              .on('click.daterangepicker', '[data-toggle=dropdown]', this._outsideClickProxy)
-              // and also close when focus changes to outside the picker (eg. tabbing between controls)
-              .on('focusin.daterangepicker', this._outsideClickProxy);
+            // Don't bind events if inline mode is enabled
+            if (!this.inline) {
+                $(document)
+                  .on('mousedown.daterangepicker', this._outsideClickProxy)
+                  .on('touchend.daterangepicker', this._outsideClickProxy)
+                  .on('click.daterangepicker', '[data-toggle=dropdown]', this._outsideClickProxy)
+                  .on('focusin.daterangepicker', this._outsideClickProxy);
 
-            // Reposition the picker if the window is resized while it's open
-            $(window).on('resize.daterangepicker', $.proxy(function(e) { this.move(e); }, this));
+                // Reposition the picker if the window is resized while it's open
+                $(window).on('resize.daterangepicker', $.proxy(function(e) { this.move(e); }, this));
+            }
 
             this.oldStartDate = this.startDate.clone();
             this.oldEndDate = this.endDate.clone();
@@ -1148,6 +1155,9 @@
 
         hide: function(e) {
             if (!this.isShowing) return;
+            
+            // Don't hide if inline mode is enabled
+            if (this.inline) return;
 
             //incomplete date selection, revert to last values
             if (!this.endDate) {
@@ -1249,7 +1259,6 @@
         },
 
         hoverDate: function(e) {
-
             //ignore dates that can't be selected
             if (!$(e.target).hasClass('available')) return;
 
@@ -1265,7 +1274,6 @@
             var startDate = this.startDate;
             if (!this.endDate) {
                 this.container.find('.drp-calendar tbody td').each(function(index, el) {
-
                     //skip week numbers, only look at dates
                     if ($(el).hasClass('week')) return;
 
@@ -1280,10 +1288,8 @@
                     } else {
                         $(el).removeClass('in-range');
                     }
-
                 });
             }
-
         },
 
         clickDate: function(e) {

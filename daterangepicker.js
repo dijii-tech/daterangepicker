@@ -83,6 +83,7 @@
         };
 
         this.callback = function() { };
+        this.onFirstDateSelected = function() { };
 
         //some state information
         this.isShowing = false;
@@ -366,6 +367,10 @@
 
         if (typeof cb === 'function') {
             this.callback = cb;
+        }
+
+        if (typeof options.onFirstDateSelected === 'function') {
+            this.onFirstDateSelected = options.onFirstDateSelected;
         }
 
         if (!this.timePicker) {
@@ -1330,6 +1335,11 @@
                 }
                 this.endDate = null;
                 this.setStartDate(date.clone());
+
+                // Trigger the onFirstDateSelected callback immediately
+                if (typeof this.onFirstDateSelected === 'function') {
+                    this.onFirstDateSelected.call(this, date.clone());
+                }
             } else if (!this.endDate && date.isBefore(this.startDate)) {
                 //special case: clicking the same date for start/end,
                 //but the time of the end date is before the start date

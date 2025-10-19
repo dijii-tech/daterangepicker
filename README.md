@@ -16,6 +16,57 @@ $('#inline-datepicker').daterangepicker({
 });
 ```
 
+### onFirstDateSelected Callback
+A new callback function that fires immediately when the first date is selected, without waiting for the "Apply" button to be clicked. This is useful for scenarios where you need to perform actions (like fetching data, updating UI, or making API calls) as soon as the user selects the start date.
+
+#### Usage
+```javascript
+$('#daterange').daterangepicker({
+    startDate: moment().subtract(6, 'days'),
+    endDate: moment(),
+
+    // Fires immediately when first date is selected (before Apply)
+    onFirstDateSelected: function(firstDate) {
+        console.log('First date selected:', firstDate.format('YYYY-MM-DD'));
+
+        // Example: Fetch data for the selected start date
+        fetchDataForDate(firstDate);
+
+        // Example: Update UI elements
+        updateDashboard(firstDate);
+    }
+}, function(start, end, label) {
+    // Standard callback - fires when Apply is clicked or selection is complete
+    console.log('Date range applied:', start.format('YYYY-MM-DD'), 'to', end.format('YYYY-MM-DD'));
+});
+```
+
+#### Real-World Example
+```javascript
+// Load data immediately when user selects the first date
+$('#report-daterange').daterangepicker({
+    onFirstDateSelected: function(firstDate) {
+        // Show loading indicator
+        $('#loading').show();
+
+        // Fetch preliminary data for the start date
+        $.ajax({
+            url: '/api/data',
+            data: { startDate: firstDate.format('YYYY-MM-DD') },
+            success: function(data) {
+                updatePreview(data);
+                $('#loading').hide();
+            }
+        });
+    }
+}, function(start, end) {
+    // Final data load when complete range is selected
+    loadCompleteRangeData(start, end);
+});
+```
+
+The callback receives a Moment.js object representing the selected first date, allowing you to format and use it as needed. See `example-first-date-callback.html` for interactive examples.
+
 ## Quick Start
 
 ### Include Files via CDN

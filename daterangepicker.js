@@ -389,6 +389,8 @@
 
         this.container.find(".holiday-header-toggle").on("click.daterangepicker", $.proxy(this.toggleHolidayHeader, this));
 
+        this.container.find(".holiday-header-content").on("click.daterangepicker", ".holiday-item", $.proxy(this.clickHolidayItem, this));
+
         if (this.element.is("input") || this.element.is("button")) {
             this.element.on({
                 "click.daterangepicker": $.proxy(this.show, this),
@@ -481,12 +483,35 @@
             for (var i = 0; i < this.holidays.length; i++) {
                 var holiday = this.holidays[i];
 
-                // Support both string dates and objects with date property
-                var holidayDate = typeof holiday === "string" ? holiday : holiday.date;
+                // Support string dates
+                if (typeof holiday === "string") {
+                    if (holiday === dateString) {
+                        return { date: holiday };
+                    }
+                }
+                // Support object with single date
+                else if (holiday.date) {
+                    if (holiday.date === dateString) {
+                        return holiday;
+                    }
+                }
+                // Support date range with startDate and endDate
+                else if (holiday.startDate && holiday.endDate) {
+                    var startMoment = moment(holiday.startDate, "YYYY-MM-DD");
+                    var endMoment = moment(holiday.endDate, "YYYY-MM-DD");
 
-                if (holidayDate === dateString) {
-                    // Return holiday object with name/description if available
-                    return typeof holiday === "object" ? holiday : { date: holidayDate };
+                    if (date.isBetween(startMoment, endMoment, "day", "[]")) {
+                        return holiday;
+                    }
+                }
+                // Support date range with range array [startDate, endDate]
+                else if (holiday.range && Array.isArray(holiday.range) && holiday.range.length === 2) {
+                    var rangeStart = moment(holiday.range[0], "YYYY-MM-DD");
+                    var rangeEnd = moment(holiday.range[1], "YYYY-MM-DD");
+
+                    if (date.isBetween(rangeStart, rangeEnd, "day", "[]")) {
+                        return holiday;
+                    }
                 }
             }
 
@@ -508,18 +533,79 @@
                 endMonth = startMonth.clone().endOf("month");
             }
 
+            // Get the year from the currently displayed months
+            var currentYear = startMonth.year();
+
+            // Define year boundaries for filtering holidays
+            var yearStart = moment([currentYear, 0, 1]); // January 1st of the current year
+            var yearEnd = moment([currentYear, 11, 31]); // December 31st of the current year
+
             var visibleHolidays = [];
+
             for (var i = 0; i < this.holidays.length; i++) {
                 var holiday = this.holidays[i];
-                var holidayDate = typeof holiday === "string" ? holiday : holiday.date;
-                var holidayMoment = moment(holidayDate, "YYYY-MM-DD");
 
-                if (holidayMoment.isBetween(startMonth.clone().startOf("month"), endMonth.clone().endOf("month"), "day", "[]")) {
-                    visibleHolidays.push({
-                        date: holidayDate,
-                        name: typeof holiday === "object" && holiday.name ? holiday.name : "Holiday",
-                        moment: holidayMoment,
-                    });
+                // Handle string format (single date)
+                if (typeof holiday === "string") {
+                    var holidayMoment = moment(holiday, "YYYY-MM-DD");
+                    // Check if holiday is in the current year
+                    if (holidayMoment.isBetween(yearStart, yearEnd, "day", "[]")) {
+                        visibleHolidays.push({
+                            date: holiday,
+                            name: "Holiday",
+                            moment: holidayMoment,
+                            isRange: false,
+                        });
+                    }
+                }
+                // Handle object with single date
+                else if (holiday.date) {
+                    var holidayMoment = moment(holiday.date, "YYYY-MM-DD");
+                    // Check if holiday is in the current year
+                    if (holidayMoment.isBetween(yearStart, yearEnd, "day", "[]")) {
+                        visibleHolidays.push({
+                            date: holiday.date,
+                            name: holiday.name || "Holiday",
+                            moment: holidayMoment,
+                            isRange: false,
+                        });
+                    }
+                }
+                // Handle date range with startDate and endDate
+                else if (holiday.startDate && holiday.endDate) {
+                    var rangeStart = moment(holiday.startDate, "YYYY-MM-DD");
+                    var rangeEnd = moment(holiday.endDate, "YYYY-MM-DD");
+
+                    // Check if range overlaps with the current year
+                    if (rangeStart.isSameOrBefore(yearEnd) && rangeEnd.isSameOrAfter(yearStart)) {
+                        visibleHolidays.push({
+                            startDate: holiday.startDate,
+                            endDate: holiday.endDate,
+                            name: holiday.name || "Holiday Period",
+                            moment: rangeStart,
+                            isRange: true,
+                            rangeStartMoment: rangeStart,
+                            rangeEndMoment: rangeEnd,
+                        });
+                    }
+                }
+                // Handle date range with range array
+                else if (holiday.range && Array.isArray(holiday.range) && holiday.range.length === 2) {
+                    var rangeStart = moment(holiday.range[0], "YYYY-MM-DD");
+                    var rangeEnd = moment(holiday.range[1], "YYYY-MM-DD");
+
+                    // Check if range overlaps with the current year
+                    if (rangeStart.isSameOrBefore(yearEnd) && rangeEnd.isSameOrAfter(yearStart)) {
+                        visibleHolidays.push({
+                            startDate: holiday.range[0],
+                            endDate: holiday.range[1],
+                            name: holiday.name || "Holiday Period",
+                            moment: rangeStart,
+                            isRange: true,
+                            rangeStartMoment: rangeStart,
+                            rangeEndMoment: rangeEnd,
+                        });
+                    }
                 }
             }
 
@@ -531,13 +617,33 @@
             if (visibleHolidays.length > 0) {
                 for (var i = 0; i < visibleHolidays.length; i++) {
                     var h = visibleHolidays[i];
-                    html += '<div class="holiday-item">';
-                    html += '<span class="holiday-date">' + h.moment.format("MMM D") + "</span>";
+
+                    if (h.isRange) {
+                        // For ranges, store start and end dates
+                        html += '<div class="holiday-item" data-start-date="' + h.startDate + '" data-end-date="' + h.endDate + '" data-is-range="true">';
+
+                        // Display date range with year if needed
+                        var startYear = h.rangeStartMoment.year();
+                        var endYear = h.rangeEndMoment.year();
+
+                        if (startYear === endYear) {
+                            html += '<span class="holiday-date">' + h.rangeStartMoment.format("MMM D") + " - " + h.rangeEndMoment.format("MMM D") + "</span>";
+                        } else {
+                            html += '<span class="holiday-date">' + h.rangeStartMoment.format("MMM D, YYYY") + " - " + h.rangeEndMoment.format("MMM D, YYYY") + "</span>";
+                        }
+                    } else {
+                        // For single dates
+                        html += '<div class="holiday-item" data-date="' + h.date + '" data-is-range="false">';
+
+                        // Display single date
+                        html += '<span class="holiday-date">' + h.moment.format("MMM D") + "</span>";
+                    }
+
                     html += '<span class="holiday-name">' + h.name + "</span>";
                     html += "</div>";
                 }
             } else {
-                html = '<div class="holiday-item no-holidays">No holidays in visible months</div>';
+                html = '<div class="holiday-item no-holidays">No holidays in ' + currentYear + '</div>';
             }
 
             this.container.find(".holiday-header-content").html(html);
@@ -1408,6 +1514,42 @@
             } else {
                 content.slideDown(200);
                 toggle.addClass("expanded");
+            }
+        },
+
+        clickHolidayItem: function (e) {
+            e.stopPropagation();
+
+            var $item = $(e.currentTarget);
+
+            // Skip if this is the "no holidays" message
+            if ($item.hasClass("no-holidays")) {
+                return;
+            }
+
+            var isRange = $item.data("is-range") === true;
+
+            if (isRange) {
+                // Handle range selection
+                var startDate = moment($item.data("start-date"), "YYYY-MM-DD");
+                var endDate = moment($item.data("end-date"), "YYYY-MM-DD");
+
+                this.setStartDate(startDate);
+                this.setEndDate(endDate);
+            } else {
+                // Handle single date selection
+                var date = moment($item.data("date"), "YYYY-MM-DD");
+
+                this.setStartDate(date);
+                this.setEndDate(date);
+            }
+
+            // Update the calendar view
+            this.updateView();
+
+            // Auto-apply if enabled or single date picker
+            if (this.autoApply || this.singleDatePicker) {
+                this.clickApply();
             }
         },
 

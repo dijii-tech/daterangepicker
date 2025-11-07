@@ -309,10 +309,14 @@
   background-color: #fff;
   border: 1px solid #e9ecef;
   font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .daterangepicker .holiday-item:hover {
-  background-color: #f8f9fa;
+  background-color: #e7f3ff;
+  border-color: #2196f3;
+  transform: translateX(2px);
 }
 
 .daterangepicker .holiday-date {
@@ -332,6 +336,13 @@
   color: #adb5bd;
   font-style: italic;
   border-style: dashed;
+  cursor: default;
+}
+
+.daterangepicker .holiday-item.no-holidays:hover {
+  background-color: #fff;
+  border-color: #e9ecef;
+  transform: none;
 }
 
 .daterangepicker select.monthselect, .daterangepicker select.yearselect {

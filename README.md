@@ -30,9 +30,21 @@ Mark and display holidays in the calendar with visual highlighting and optional 
 ```javascript
 $('#datepicker').daterangepicker({
     holidays: [
+        // Single date formats
         '2025-01-01',  // Simple string format
         { date: '2025-07-04', name: 'Independence Day' },  // With name
-        { date: '2025-12-25', name: 'Christmas', class: 'special' }  // With custom class
+        { date: '2025-12-25', name: 'Christmas', class: 'special' },  // With custom class
+
+        // Holiday range formats (NEW!)
+        {
+            startDate: '2025-07-20',
+            endDate: '2025-07-24',
+            name: 'Summer Break Week'
+        },
+        {
+            range: ['2025-12-24', '2025-12-26'],  // Alternative array format
+            name: 'Christmas Holiday Period'
+        }
     ]
 });
 ```
@@ -55,6 +67,7 @@ $('#datepicker').daterangepicker({
 
 **Features:**
 - Visual highlighting of holiday dates
+- **Holiday ranges** - Define multi-day holiday periods
 - Tooltip support for holiday names
 - Collapsible header with holiday list
 - Automatically filters holidays for visible months
@@ -188,13 +201,31 @@ $('#calendar-container').daterangepicker({
 |--------|------|---------|-------------|
 | `holidayLabel` | String | `'Holidays'` | Label for holiday header toggle |
 
-### Holiday Object Format
+### Holiday Object Formats
 
+#### Single Date Holiday
 ```javascript
 {
     date: 'YYYY-MM-DD',     // Required: Holiday date
     name: 'Holiday Name',   // Optional: Display name (shown in tooltip and header)
     class: 'custom-class'   // Optional: Custom CSS class
+}
+```
+
+#### Holiday Range (Format 1: startDate/endDate)
+```javascript
+{
+    startDate: 'YYYY-MM-DD',  // Required: Range start date
+    endDate: 'YYYY-MM-DD',    // Required: Range end date
+    name: 'Holiday Period'    // Optional: Display name
+}
+```
+
+#### Holiday Range (Format 2: range array)
+```javascript
+{
+    range: ['YYYY-MM-DD', 'YYYY-MM-DD'],  // Required: [startDate, endDate]
+    name: 'Holiday Period'                 // Optional: Display name
 }
 ```
 

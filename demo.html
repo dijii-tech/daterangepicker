@@ -199,6 +199,15 @@
                     <input type="text" id="holidays-header-demo" class="form-control" style="max-width: 400px;" />
                 </div>
             </div>
+
+            <!-- Holidays with Range Demo -->
+            <div class="row" style="margin-top: 40px">
+                <div class="col-md-12">
+                    <h4>Date Range Picker with Holiday Ranges</h4>
+                    <p>This example demonstrates holiday ranges. You can define multi-day holiday periods using startDate/endDate or range array format.</p>
+                    <input type="text" id="holidays-range-demo" class="form-control" style="max-width: 400px;" />
+                </div>
+            </div>
         </div>
 
         <style type="text/css">
@@ -300,6 +309,48 @@
                         monthNames: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
                         firstDay: 1
                     }
+                });
+
+                // Initialize holidays with range demo
+                var holidaysWithRanges = [
+                    // Single date holidays
+                    { date: '2015-01-01', name: 'New Year\'s Day' },
+                    { date: '2015-04-23', name: 'National Sovereignty Day' },
+
+                    // Holiday ranges using startDate/endDate format
+                    {
+                        startDate: '2015-06-15',
+                        endDate: '2015-06-17',
+                        name: 'Summer Festival'
+                    },
+                    {
+                        startDate: '2015-07-20',
+                        endDate: '2015-07-24',
+                        name: 'Summer Break Week'
+                    },
+
+                    // Holiday ranges using array format
+                    {
+                        range: ['2015-08-10', '2015-08-14'],
+                        name: 'Mid-August Holiday Period'
+                    },
+                    {
+                        range: ['2015-12-24', '2015-12-26'],
+                        name: 'Christmas Holiday'
+                    },
+
+                    // More single dates
+                    { date: '2015-10-29', name: 'Republic Day' },
+                    { date: '2015-12-31', name: 'New Year\'s Eve' }
+                ];
+
+                $("#holidays-range-demo").daterangepicker({
+                    startDate: moment('2015-06-01'),
+                    endDate: moment('2015-08-31'),
+                    holidays: holidaysWithRanges,
+                    showHolidayHeader: true,
+                    autoUpdateInput: true,
+                    opens: 'center'
                 });
 
                 updateConfig();

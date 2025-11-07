@@ -2,9 +2,16 @@
 
 A JavaScript component for choosing date ranges, dates and times. This is a fork of [Date Range Picker](https://www.daterangepicker.com/) with additional features.
 
+## ✨ Key Enhancements
+
+- 📅 **Holidays Feature** - Visual holiday marking with collapsible header list
+- 🌍 **Localization Support** - Full locale support including holiday labels
+- 📌 **Inline Mode** - Display calendar permanently without input field
+- ⚡ **First Date Callback** - React immediately to user's first date selection
+
 ## Features Added
 
-### Inline Mode
+### 1. Inline Mode
 You can now use the date range picker as an inline component without requiring an input field. This is useful when you want to display the calendar permanently on the page.
 
 ```javascript
@@ -16,7 +23,71 @@ $('#inline-datepicker').daterangepicker({
 });
 ```
 
-### onFirstDateSelected Callback
+### 2. Holidays Feature
+Mark and display holidays in the calendar with visual highlighting and optional header list.
+
+#### Basic Holiday Usage
+```javascript
+$('#datepicker').daterangepicker({
+    holidays: [
+        '2025-01-01',  // Simple string format
+        { date: '2025-07-04', name: 'Independence Day' },  // With name
+        { date: '2025-12-25', name: 'Christmas', class: 'special' }  // With custom class
+    ]
+});
+```
+
+#### Holiday Header
+Display a collapsible header showing all holidays in visible months:
+
+```javascript
+$('#datepicker').daterangepicker({
+    holidays: [
+        { date: '2025-01-01', name: 'New Year\'s Day' },
+        { date: '2025-07-04', name: 'Independence Day' }
+    ],
+    showHolidayHeader: true,
+    locale: {
+        holidayLabel: 'Holidays'  // Customize the header label
+    }
+});
+```
+
+**Features:**
+- Visual highlighting of holiday dates
+- Tooltip support for holiday names
+- Collapsible header with holiday list
+- Automatically filters holidays for visible months
+- Localization support
+- Custom CSS classes per holiday
+
+**Examples:**
+- See `example-holidays.html` for comprehensive examples
+- See `HOLIDAYS_FEATURE.md` for detailed documentation
+- See `HOLIDAY_HEADER_FEATURE.md` for Turkish documentation
+
+#### Localization Example (Turkish)
+```javascript
+$('#datepicker').daterangepicker({
+    holidays: [
+        { date: '2025-01-01', name: 'Yılbaşı' },
+        { date: '2025-04-23', name: 'Ulusal Egemenlik ve Çocuk Bayramı' },
+        { date: '2025-10-29', name: 'Cumhuriyet Bayramı' }
+    ],
+    showHolidayHeader: true,
+    locale: {
+        format: 'DD/MM/YYYY',
+        holidayLabel: 'Tatiller',
+        applyLabel: 'Uygula',
+        cancelLabel: 'İptal',
+        daysOfWeek: ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'],
+        monthNames: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
+                    'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık']
+    }
+});
+```
+
+### 3. onFirstDateSelected Callback
 A new callback function that fires immediately when the first date is selected, without waiting for the "Apply" button to be clicked. This is useful for scenarios where you need to perform actions (like fetching data, updating UI, or making API calls) as soon as the user selects the start date.
 
 #### Usage
@@ -100,13 +171,56 @@ $('#calendar-container').daterangepicker({
 });
 ```
 
-## Documentation
-For complete documentation, usage, and examples, visit the original project website:
-[https://www.daterangepicker.com/](https://www.daterangepicker.com/)
+## API Reference
+
+### New Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `inline` | Boolean | `false` | Display calendar inline without input field |
+| `holidays` | Array | `[]` | Array of holiday dates (strings or objects) |
+| `showHolidayHeader` | Boolean | `false` | Show collapsible header with holiday list |
+| `onFirstDateSelected` | Function | `null` | Callback when first date is selected |
+
+### Locale Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `holidayLabel` | String | `'Holidays'` | Label for holiday header toggle |
+
+### Holiday Object Format
+
+```javascript
+{
+    date: 'YYYY-MM-DD',     // Required: Holiday date
+    name: 'Holiday Name',   // Optional: Display name (shown in tooltip and header)
+    class: 'custom-class'   // Optional: Custom CSS class
+}
+```
+
+## Examples
+
+- **`demo.html`** - Interactive configuration builder with all features
+- **`example-holidays.html`** - Comprehensive holiday feature examples (7 examples)
+- **`example-first-date-callback.html`** - First date callback examples
+
+## Documentation Files
+
+- **`HOLIDAYS_FEATURE.md`** - Complete holiday feature documentation (English)
+- **`HOLIDAY_HEADER_FEATURE.md`** - Holiday header documentation (Turkish)
+- Original documentation: [https://www.daterangepicker.com/](https://www.daterangepicker.com/)
+
+## Browser Support
+
+- Chrome (latest)
+- Firefox (latest)
+- Safari (latest)
+- Edge (latest)
+- IE 11 (with polyfills)
 
 ## Credits
 - Original project by Dan Grossman: [Date Range Picker](https://www.daterangepicker.com/)
-- Inline mode and other enhancements by DIJI Tech
+- Inline mode, holidays feature, and other enhancements by DIJI Tech
 
 ## License
 MIT License

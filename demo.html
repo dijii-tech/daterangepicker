@@ -181,6 +181,24 @@
                     <div id="inline-datepicker"></div>
                 </div>
             </div>
+
+            <!-- Holidays Demo -->
+            <div class="row" style="margin-top: 40px">
+                <div class="col-md-12">
+                    <h4>Date Range Picker with Holidays</h4>
+                    <p>This example demonstrates how to add external holidays to the date picker. Hover over highlighted dates to see holiday names.</p>
+                    <input type="text" id="holidays-demo" class="form-control" style="max-width: 400px;" />
+                </div>
+            </div>
+
+            <!-- Holidays with Header Demo -->
+            <div class="row" style="margin-top: 40px">
+                <div class="col-md-12">
+                    <h4>Date Range Picker with Holiday Header</h4>
+                    <p>This example includes a collapsible header showing all holidays in the visible months. Click "📅 Holidays" to toggle the list.</p>
+                    <input type="text" id="holidays-header-demo" class="form-control" style="max-width: 400px;" />
+                </div>
+            </div>
         </div>
 
         <style type="text/css">
@@ -226,6 +244,62 @@
                 $("#endDate").daterangepicker({
                     singleDatePicker: true,
                     startDate: moment(),
+                });
+
+                // Initialize holidays demo
+                var holidays = [
+                    { date: '2015-07-04', name: 'Independence Day', class: 'independence-day' },
+                    { date: '2015-07-14', name: 'Bastille Day' },
+                    { date: '2015-08-15', name: 'Assumption of Mary' },
+                    { date: '2015-08-30', name: 'Victory Day' },
+                    { date: '2015-10-29', name: 'Republic Day' },
+                    '2015-12-25', // Simple string format for Christmas
+                    '2015-01-01'  // New Year's Day
+                ];
+
+                $("#holidays-demo").daterangepicker({
+                    startDate: moment('2015-07-01'),
+                    endDate: moment('2015-07-31'),
+                    holidays: holidays,
+                    autoUpdateInput: true,
+                    opens: 'center'
+                });
+
+                // Initialize holidays with header demo
+                var extendedHolidays = [
+                    { date: '2015-01-01', name: 'New Year\'s Day' },
+                    { date: '2015-02-14', name: 'Valentine\'s Day' },
+                    { date: '2015-04-23', name: 'National Sovereignty Day' },
+                    { date: '2015-05-01', name: 'Labor Day' },
+                    { date: '2015-05-19', name: 'Youth and Sports Day' },
+                    { date: '2015-07-04', name: 'Independence Day' },
+                    { date: '2015-07-14', name: 'Bastille Day' },
+                    { date: '2015-08-15', name: 'Assumption of Mary' },
+                    { date: '2015-08-30', name: 'Victory Day' },
+                    { date: '2015-10-29', name: 'Republic Day' },
+                    { date: '2015-11-11', name: 'Veterans Day' },
+                    { date: '2015-12-25', name: 'Christmas Day' },
+                    { date: '2015-12-31', name: 'New Year\'s Eve' }
+                ];
+
+                $("#holidays-header-demo").daterangepicker({
+                    startDate: moment('2015-01-01'),
+                    endDate: moment('2015-12-31'),
+                    holidays: extendedHolidays,
+                    showHolidayHeader: true,
+                    autoUpdateInput: true,
+                    opens: 'center',
+                    locale: {
+                        format: 'DD/MM/YYYY',
+                        separator: ' - ',
+                        applyLabel: 'Uygula',
+                        cancelLabel: 'İptal',
+                        holidayLabel: 'Tatiller',
+                        customRangeLabel: 'Özel Aralık',
+                        daysOfWeek: ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'],
+                        monthNames: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
+                        firstDay: 1
+                    }
                 });
 
                 updateConfig();

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Date Range Picker - Holidays Example</title>
+
+        <link rel="stylesheet" type="text/css" href="daterangepicker.css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+        <script src="daterangepicker.js"></script>
+
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                max-width: 1200px;
+                margin: 50px auto;
+                padding: 0 20px;
+            }
+            .example-section {
+                margin-bottom: 40px;
+                padding: 20px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+            }
+            .example-section h2 {
+                margin-top: 0;
+                color: #333;
+            }
+            .date-input {
+                padding: 10px;
+                font-size: 14px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                width: 300px;
+                margin: 10px 0;
+            }
+            code {
+                background: #f4f4f4;
+                padding: 2px 6px;
+                border-radius: 3px;
+                font-size: 13px;
+            }
+            pre {
+                background: #f4f4f4;
+                padding: 15px;
+                border-radius: 5px;
+                overflow-x: auto;
+            }
+            .legend {
+                display: flex;
+                gap: 20px;
+                margin-top: 10px;
+                font-size: 14px;
+            }
+            .legend-item {
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            }
+            .legend-box {
+                width: 20px;
+                height: 20px;
+                border: 1px solid #ddd;
+                border-radius: 3px;
+            }
+            .legend-holiday {
+                background-color: #fff3cd;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Date Range Picker with Holidays Feature</h1>
+        <p>Examples demonstrating different ways to integrate holidays into the date range picker.</p>
+
+        <!-- Example 1: Simple String Format -->
+        <div class="example-section">
+            <h2>1. Simple String Format</h2>
+            <p>The simplest way to add holidays using date strings in YYYY-MM-DD format:</p>
+            <input type="text" id="example1" class="date-input" placeholder="Click to select dates" />
+
+            <pre><code>$('#example1').daterangepicker({
+    startDate: moment('2025-01-01'),
+    endDate: moment('2025-01-15'),
+    holidays: [
+        '2025-01-01',
+        '2025-01-06',
+        '2025-01-15'
+    ]
+});</code></pre>
+        </div>
+
+        <!-- Example 2: Detailed Object Format with Names -->
+        <div class="example-section">
+            <h2>2. Object Format with Holiday Names</h2>
+            <p>Add holiday names that appear as tooltips when hovering over dates:</p>
+            <input type="text" id="example2" class="date-input" placeholder="Click to select dates" />
+
+            <pre><code>$('#example2').daterangepicker({
+    startDate: moment(),
+    endDate: moment().add(30, 'days'),
+    holidays: [
+        { date: '2025-01-01', name: 'New Year\'s Day' },
+        { date: '2025-02-14', name: 'Valentine\'s Day' },
+        { date: '2025-07-04', name: 'Independence Day' }
+    ]
+});</code></pre>
+        </div>
+
+        <!-- Example 3: Custom CSS Classes -->
+        <div class="example-section">
+            <h2>3. Custom Styling with CSS Classes</h2>
+            <p>Use custom CSS classes for different types of holidays:</p>
+            <input type="text" id="example3" class="date-input" placeholder="Click to select dates" />
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-box legend-holiday"></div>
+                    <span>Regular Holiday</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box" style="background-color: #ffcdd2"></div>
+                    <span>National Holiday</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box" style="background-color: #c8e6c9"></div>
+                    <span>Religious Holiday</span>
+                </div>
+            </div>
+
+            <style>
+                .daterangepicker td.holiday.national {
+                    background-color: #ffcdd2;
+                    border-color: #f44336;
+                }
+                .daterangepicker td.holiday.religious {
+                    background-color: #c8e6c9;
+                    border-color: #4caf50;
+                }
+            </style>
+
+            <pre><code>$('#example3').daterangepicker({
+    holidays: [
+        { date: '2025-01-01', name: 'New Year', class: 'national' },
+        { date: '2025-01-06', name: 'Epiphany', class: 'religious' },
+        { date: '2025-02-14', name: 'Valentine\'s Day' }
+    ]
+});</code></pre>
+        </div>
+
+        <!-- Example 4: External API Integration -->
+        <div class="example-section">
+            <h2>4. Loading from External Source</h2>
+            <p>Simulate loading holidays from an API or external file:</p>
+            <button id="loadHolidays" style="padding: 10px 20px; cursor: pointer">Load Holidays</button>
+            <input type="text" id="example4" class="date-input" placeholder="Click button to load holidays first" disabled />
+
+            <pre><code>// Simulate API call
+fetch('/api/holidays')
+    .then(response => response.json())
+    .then(holidays => {
+        $('#example4').daterangepicker({
+            holidays: holidays
+        });
+    });</code></pre>
+        </div>
+
+        <!-- Example 5: Current Year Holidays -->
+        <div class="example-section">
+            <h2>5. Complete Year View with Holidays</h2>
+            <p>Full calendar with a complete list of holidays for the current year:</p>
+            <input type="text" id="example5" class="date-input" placeholder="Click to select dates" />
+        </div>
+
+        <!-- Example 6: Holiday Header -->
+        <div class="example-section">
+            <h2>6. Collapsible Holiday Header</h2>
+            <p>Shows a collapsible header at the top listing all holidays in visible months. Click "📅 Holidays" to toggle:</p>
+            <input type="text" id="example6" class="date-input" placeholder="Click to select dates" />
+
+            <pre><code>$('#example6').daterangepicker({
+    holidays: holidays,
+    showHolidayHeader: true  // Enable holiday header
+});</code></pre>
+        </div>
+
+        <!-- Example 7: Localized Holiday Header -->
+        <div class="example-section">
+            <h2>7. Localized Holiday Header (Turkish)</h2>
+            <p>Holiday header with Turkish language support using locale settings:</p>
+            <input type="text" id="example7" class="date-input" placeholder="Tarih seçin" />
+
+            <pre><code>$('#example7').daterangepicker({
+    holidays: turkeyHolidays,
+    showHolidayHeader: true,
+    locale: {
+        format: 'DD/MM/YYYY',
+        holidayLabel: 'Tatiller',  // Custom header label
+        applyLabel: 'Uygula',
+        cancelLabel: 'İptal'
+    }
+});</code></pre>
+        </div>
+
+        <script>
+            // Example 1: Simple string format
+            $("#example1").daterangepicker({
+                startDate: moment("2025-01-01"),
+                endDate: moment("2025-01-15"),
+                holidays: ["2025-01-01", "2025-01-06", "2025-01-15"],
+                opens: "center",
+            });
+
+            // Example 2: Object format with names
+            $("#example2").daterangepicker({
+                startDate: moment(),
+                endDate: moment().add(30, "days"),
+                holidays: [
+                    { date: "2025-01-01", name: "New Year's Day" },
+                    { date: "2025-02-14", name: "Valentine's Day" },
+                    { date: "2025-07-04", name: "Independence Day" },
+                    { date: "2025-12-25", name: "Christmas Day" },
+                ],
+                opens: "center",
+            });
+
+            // Example 3: Custom CSS classes
+            $("#example3").daterangepicker({
+                startDate: moment("2025-01-01"),
+                endDate: moment("2025-02-28"),
+                holidays: [
+                    { date: "2025-01-01", name: "New Year's Day", class: "national" },
+                    { date: "2025-01-06", name: "Epiphany", class: "religious" },
+                    { date: "2025-01-20", name: "Martin Luther King Jr. Day", class: "national" },
+                    { date: "2025-02-14", name: "Valentine's Day" },
+                    { date: "2025-02-17", name: "Presidents' Day", class: "national" },
+                ],
+                opens: "center",
+            });
+
+            // Example 4: External source simulation
+            $("#loadHolidays").click(function () {
+                // Simulate API delay
+                $(this).prop("disabled", true).text("Loading...");
+
+                setTimeout(function () {
+                    const holidays = [
+                        { date: "2025-01-01", name: "New Year's Day" },
+                        { date: "2025-01-20", name: "Martin Luther King Jr. Day" },
+                        { date: "2025-02-17", name: "Presidents' Day" },
+                        { date: "2025-05-26", name: "Memorial Day" },
+                        { date: "2025-07-04", name: "Independence Day" },
+                        { date: "2025-09-01", name: "Labor Day" },
+                        { date: "2025-11-27", name: "Thanksgiving" },
+                        { date: "2025-12-25", name: "Christmas Day" },
+                    ];
+
+                    $("#example4")
+                        .prop("disabled", false)
+                        .daterangepicker({
+                            startDate: moment("2025-01-01"),
+                            endDate: moment("2025-12-31"),
+                            holidays: holidays,
+                            opens: "center",
+                        });
+
+                    $("#loadHolidays").text("✓ Holidays Loaded").css("background", "#4caf50").css("color", "white");
+                }, 1000);
+            });
+
+            // Example 5: Complete year view
+            const fullYearHolidays = [
+                { date: "2025-01-01", name: "New Year's Day" },
+                { date: "2025-01-20", name: "Martin Luther King Jr. Day" },
+                { date: "2025-02-14", name: "Valentine's Day" },
+                { date: "2025-02-17", name: "Presidents' Day" },
+                { date: "2025-03-17", name: "St. Patrick's Day" },
+                { date: "2025-04-20", name: "Easter Sunday" },
+                { date: "2025-05-11", name: "Mother's Day" },
+                { date: "2025-05-26", name: "Memorial Day" },
+                { date: "2025-06-15", name: "Father's Day" },
+                { date: "2025-07-04", name: "Independence Day" },
+                { date: "2025-09-01", name: "Labor Day" },
+                { date: "2025-10-13", name: "Columbus Day" },
+                { date: "2025-10-31", name: "Halloween" },
+                { date: "2025-11-11", name: "Veterans Day" },
+                { date: "2025-11-27", name: "Thanksgiving" },
+                { date: "2025-12-25", name: "Christmas Day" },
+                { date: "2025-12-31", name: "New Year's Eve" },
+            ];
+
+            $("#example5").daterangepicker({
+                startDate: moment().startOf("year"),
+                endDate: moment().endOf("year"),
+                holidays: fullYearHolidays,
+                opens: "center",
+                ranges: {
+                    "This Month": [moment().startOf("month"), moment().endOf("month")],
+                    "Next Month": [moment().add(1, "month").startOf("month"), moment().add(1, "month").endOf("month")],
+                    "This Year": [moment().startOf("year"), moment().endOf("year")],
+                },
+            });
+
+            // Example 6: Holiday header
+            $("#example6").daterangepicker({
+                startDate: moment("2025-01-01"),
+                endDate: moment("2025-12-31"),
+                holidays: fullYearHolidays,
+                showHolidayHeader: true,
+                opens: "center",
+                singleDatePicker: true,
+                ranges: {
+                    "Q1 2025": [moment("2025-01-01"), moment("2025-03-31")],
+                    "Q2 2025": [moment("2025-04-01"), moment("2025-06-30")],
+                    "Q3 2025": [moment("2025-07-01"), moment("2025-09-30")],
+                    "Q4 2025": [moment("2025-10-01"), moment("2025-12-31")],
+                },
+            });
+
+            // Example 7: Localized (Turkish)
+            const turkeyHolidays = [
+                { date: "2025-01-01", name: "Yılbaşı" },
+                { date: "2025-04-23", name: "Ulusal Egemenlik ve Çocuk Bayramı" },
+                { date: "2025-05-01", name: "Emek ve Dayanışma Günü" },
+                { date: "2025-05-19", name: "Gençlik ve Spor Bayramı" },
+                { date: "2025-07-15", name: "Demokrasi ve Milli Birlik Günü" },
+                { date: "2025-08-30", name: "Zafer Bayramı" },
+                { date: "2025-10-29", name: "Cumhuriyet Bayramı" },
+            ];
+
+            $("#example7").daterangepicker({
+                startDate: moment("2025-01-01"),
+                endDate: moment("2025-12-31"),
+                holidays: turkeyHolidays,
+                showHolidayHeader: true,
+                opens: "center",
+                locale: {
+                    format: "DD/MM/YYYY",
+                    separator: " - ",
+                    applyLabel: "Uygula",
+                    cancelLabel: "İptal",
+                    holidayLabel: "Tatiller",
+                    customRangeLabel: "Özel Aralık",
+                    daysOfWeek: ["Paz", "Pzt", "Sal", "Çar", "Per", "Cum", "Cmt"],
+                    monthNames: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"],
+                    firstDay: 1,
+                },
+                ranges: {
+                    "Bu Ay": [moment().startOf("month"), moment().endOf("month")],
+                    "Gelecek Ay": [moment().add(1, "month").startOf("month"), moment().add(1, "month").endOf("month")],
+                    "Bu Yıl": [moment().startOf("year"), moment().endOf("year")],
+                },
+            });
+        </script>
+    </body>
+</html>

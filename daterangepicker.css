@@ -233,6 +233,107 @@
   text-decoration: line-through;
 }
 
+.daterangepicker td.holiday {
+  background-color: #fff3cd;
+  border-color: #ffc107;
+  position: relative;
+}
+
+.daterangepicker td.holiday:hover {
+  background-color: #ffe69c;
+}
+
+.daterangepicker td.holiday.active,
+.daterangepicker td.holiday.active:hover {
+  background-color: #357ebd;
+  border-color: transparent;
+  color: #fff;
+}
+
+.daterangepicker td.holiday::after {
+  content: '●';
+  position: absolute;
+  bottom: 2px;
+  right: 4px;
+  font-size: 8px;
+  color: #ff6b6b;
+}
+
+.daterangepicker .holiday-header {
+  border-bottom: 1px solid #ddd;
+  background-color: #f8f9fa;
+  display: none;
+}
+
+.daterangepicker .holiday-header-toggle {
+  padding: 10px 15px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+  user-select: none;
+  transition: background-color 0.2s;
+  position: relative;
+}
+
+.daterangepicker .holiday-header-toggle:hover {
+  background-color: #e9ecef;
+}
+
+.daterangepicker .holiday-header-toggle::after {
+  content: '▼';
+  position: absolute;
+  right: 15px;
+  font-size: 10px;
+  transition: transform 0.2s;
+}
+
+.daterangepicker .holiday-header-toggle.expanded::after {
+  transform: rotate(-180deg);
+}
+
+.daterangepicker .holiday-header-content {
+  max-height: 150px;
+  overflow-y: auto;
+  padding: 8px 15px;
+  display: none;
+}
+
+.daterangepicker .holiday-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px;
+  margin: 2px 0;
+  border-radius: 4px;
+  background-color: #fff;
+  border: 1px solid #e9ecef;
+  font-size: 13px;
+}
+
+.daterangepicker .holiday-item:hover {
+  background-color: #f8f9fa;
+}
+
+.daterangepicker .holiday-date {
+  font-weight: 600;
+  color: #495057;
+  min-width: 60px;
+}
+
+.daterangepicker .holiday-name {
+  flex: 1;
+  color: #6c757d;
+  text-align: right;
+}
+
+.daterangepicker .holiday-item.no-holidays {
+  justify-content: center;
+  color: #adb5bd;
+  font-style: italic;
+  border-style: dashed;
+}
+
 .daterangepicker select.monthselect, .daterangepicker select.yearselect {
   font-size: 12px;
   padding: 1px;

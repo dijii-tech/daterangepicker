@@ -968,13 +968,13 @@
                     }
                     if (!disabled) cname += "available";
 
-                    // Add holiday title/tooltip if available
-                    var titleAttr = "r" + row + "c" + col;
-                    if (holidayData !== false && holidayData.name) {
-                        titleAttr = holidayData.name;
-                    }
+                    // data-title must always be "r{row}c{col}" format for click/hover to work
+                    var dataTitleAttr = "r" + row + "c" + col;
 
-                    html += '<td class="' + cname.replace(/^\s+|\s+$/g, "") + '" data-title="' + titleAttr + '" title="' + (holidayData !== false && holidayData.name ? holidayData.name : "") + '">' + calendar[row][col].date() + "</td>";
+                    // Separate title attribute for tooltip (holiday name)
+                    var tooltipAttr = holidayData !== false && holidayData.name ? holidayData.name : "";
+
+                    html += '<td class="' + cname.replace(/^\s+|\s+$/g, "") + '" data-title="' + dataTitleAttr + '" title="' + tooltipAttr + '">' + calendar[row][col].date() + "</td>";
                 }
                 html += "</tr>";
             }
@@ -1562,21 +1562,41 @@
                 var startDate = moment($item.data("start-date"), "YYYY-MM-DD");
                 var endDate = moment($item.data("end-date"), "YYYY-MM-DD");
 
-                // Check if dates are valid
-                if (this.isInvalidDate(startDate) || this.isInvalidDate(endDate)) {
-                    return; // Don't select invalid dates
-                }
+                // For single date picker, only use start date
+                if (this.singleDatePicker) {
+                    // Check if start date is valid
+                    if (this.isInvalidDate(startDate)) {
+                        return;
+                    }
 
-                // Check min/max date constraints
-                if (this.minDate && startDate.isBefore(this.minDate, "day")) {
-                    return;
-                }
-                if (this.maxDate && endDate.isAfter(this.maxDate, "day")) {
-                    return;
-                }
+                    // Check min/max date constraints
+                    if (this.minDate && startDate.isBefore(this.minDate, "day")) {
+                        return;
+                    }
+                    if (this.maxDate && startDate.isAfter(this.maxDate, "day")) {
+                        return;
+                    }
 
-                this.setStartDate(startDate);
-                this.setEndDate(endDate);
+                    this.setStartDate(startDate);
+                    this.setEndDate(startDate);
+                } else {
+                    // For range picker, use both dates
+                    // Check if dates are valid
+                    if (this.isInvalidDate(startDate) || this.isInvalidDate(endDate)) {
+                        return; // Don't select invalid dates
+                    }
+
+                    // Check min/max date constraints
+                    if (this.minDate && startDate.isBefore(this.minDate, "day")) {
+                        return;
+                    }
+                    if (this.maxDate && endDate.isAfter(this.maxDate, "day")) {
+                        return;
+                    }
+
+                    this.setStartDate(startDate);
+                    this.setEndDate(endDate);
+                }
             } else {
                 // Handle single date selection
                 var date = moment($item.data("date"), "YYYY-MM-DD");

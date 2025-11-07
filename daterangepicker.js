@@ -617,23 +617,49 @@
             if (visibleHolidays.length > 0) {
                 for (var i = 0; i < visibleHolidays.length; i++) {
                     var h = visibleHolidays[i];
+                    var isDisabled = false;
 
                     if (h.isRange) {
+                        // Check if range is disabled
+                        var rangeStart = h.rangeStartMoment;
+                        var rangeEnd = h.rangeEndMoment;
+
+                        if (this.isInvalidDate(rangeStart) || this.isInvalidDate(rangeEnd)) {
+                            isDisabled = true;
+                        }
+                        if (this.minDate && rangeStart.isBefore(this.minDate, "day")) {
+                            isDisabled = true;
+                        }
+                        if (this.maxDate && rangeEnd.isAfter(this.maxDate, "day")) {
+                            isDisabled = true;
+                        }
+
                         // For ranges, store start and end dates
-                        html += '<div class="holiday-item" data-start-date="' + h.startDate + '" data-end-date="' + h.endDate + '" data-is-range="true">';
+                        html += '<div class="holiday-item' + (isDisabled ? " disabled" : "") + '" data-start-date="' + h.startDate + '" data-end-date="' + h.endDate + '" data-is-range="true">';
 
                         // Display date range with year if needed
-                        var startYear = h.rangeStartMoment.year();
-                        var endYear = h.rangeEndMoment.year();
+                        var startYear = rangeStart.year();
+                        var endYear = rangeEnd.year();
 
                         if (startYear === endYear) {
-                            html += '<span class="holiday-date">' + h.rangeStartMoment.format("MMM D") + " - " + h.rangeEndMoment.format("MMM D") + "</span>";
+                            html += '<span class="holiday-date">' + rangeStart.format("MMM D") + " - " + rangeEnd.format("MMM D") + "</span>";
                         } else {
-                            html += '<span class="holiday-date">' + h.rangeStartMoment.format("MMM D, YYYY") + " - " + h.rangeEndMoment.format("MMM D, YYYY") + "</span>";
+                            html += '<span class="holiday-date">' + rangeStart.format("MMM D, YYYY") + " - " + rangeEnd.format("MMM D, YYYY") + "</span>";
                         }
                     } else {
+                        // Check if single date is disabled
+                        if (this.isInvalidDate(h.moment)) {
+                            isDisabled = true;
+                        }
+                        if (this.minDate && h.moment.isBefore(this.minDate, "day")) {
+                            isDisabled = true;
+                        }
+                        if (this.maxDate && h.moment.isAfter(this.maxDate, "day")) {
+                            isDisabled = true;
+                        }
+
                         // For single dates
-                        html += '<div class="holiday-item" data-date="' + h.date + '" data-is-range="false">';
+                        html += '<div class="holiday-item' + (isDisabled ? " disabled" : "") + '" data-date="' + h.date + '" data-is-range="false">';
 
                         // Display single date
                         html += '<span class="holiday-date">' + h.moment.format("MMM D") + "</span>";
@@ -1327,6 +1353,7 @@
                 this.rightCalendar.month.subtract(1, "month");
             }
             this.updateCalendars();
+            this.renderHolidayHeader(); // Update holidays when navigating months
         },
 
         clickNext: function (e) {
@@ -1338,6 +1365,7 @@
                 if (this.linkedCalendars) this.leftCalendar.month.add(1, "month");
             }
             this.updateCalendars();
+            this.renderHolidayHeader(); // Update holidays when navigating months
         },
 
         hoverDate: function (e) {
@@ -1534,11 +1562,37 @@
                 var startDate = moment($item.data("start-date"), "YYYY-MM-DD");
                 var endDate = moment($item.data("end-date"), "YYYY-MM-DD");
 
+                // Check if dates are valid
+                if (this.isInvalidDate(startDate) || this.isInvalidDate(endDate)) {
+                    return; // Don't select invalid dates
+                }
+
+                // Check min/max date constraints
+                if (this.minDate && startDate.isBefore(this.minDate, "day")) {
+                    return;
+                }
+                if (this.maxDate && endDate.isAfter(this.maxDate, "day")) {
+                    return;
+                }
+
                 this.setStartDate(startDate);
                 this.setEndDate(endDate);
             } else {
                 // Handle single date selection
                 var date = moment($item.data("date"), "YYYY-MM-DD");
+
+                // Check if date is valid
+                if (this.isInvalidDate(date)) {
+                    return; // Don't select invalid dates
+                }
+
+                // Check min/max date constraints
+                if (this.minDate && date.isBefore(this.minDate, "day")) {
+                    return;
+                }
+                if (this.maxDate && date.isAfter(this.maxDate, "day")) {
+                    return;
+                }
 
                 this.setStartDate(date);
                 this.setEndDate(date);
@@ -1591,6 +1645,7 @@
                 if (this.linkedCalendars) this.leftCalendar.month = this.rightCalendar.month.clone().subtract(1, "month");
             }
             this.updateCalendars();
+            this.renderHolidayHeader(); // Update holidays when month/year changes
         },
 
         timeChanged: function (e) {

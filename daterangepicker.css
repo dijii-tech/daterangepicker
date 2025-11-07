@@ -345,6 +345,24 @@
   transform: none;
 }
 
+.daterangepicker .holiday-item.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: #f8f9fa;
+}
+
+.daterangepicker .holiday-item.disabled:hover {
+  background-color: #f8f9fa;
+  border-color: #e9ecef;
+  transform: none;
+}
+
+.daterangepicker .holiday-item.disabled .holiday-date,
+.daterangepicker .holiday-item.disabled .holiday-name {
+  color: #adb5bd;
+  text-decoration: line-through;
+}
+
 .daterangepicker select.monthselect, .daterangepicker select.yearselect {
   font-size: 12px;
   padding: 1px;
